@@ -1,6 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
+import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from '@prisma/client';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -8,14 +12,27 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
-  async signIn(email: string, pass: string): Promise<any> {
+
+  async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findOneByEmail(email);
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+    if (user && bcrypt.compare(password, user.password)) {
+      const { password, ...result } = user;
+      //what we return here will be available in the req object
+      //(in signin req)
+      return result;
     }
-    const payload = { sub: user.id, username: user.email };
+    return null;
+  }
+  async signIn(
+    user: Omit<User, 'password'>,
+  ): Promise<{ access_token: string }> {
+    const payload: JwtPayload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async signUp(userDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+    return await this.usersService.create(userDto);
   }
 }
