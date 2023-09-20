@@ -18,7 +18,7 @@ export class AuthService {
     if (user && bcrypt.compare(password, user.password)) {
       const { password, ...result } = user;
       //what we return here will be available in the req object
-      //(in signin req)
+      //(in sign in req)
       return result;
     }
     return null;

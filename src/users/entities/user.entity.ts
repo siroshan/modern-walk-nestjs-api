@@ -2,6 +2,7 @@
 
 import { User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from 'src/auth/enums/role.enum';
 
 export class UserEntity implements User {
   @ApiProperty()
@@ -15,6 +16,9 @@ export class UserEntity implements User {
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty()
+  roles: Role[];
 
   @ApiProperty()
   password: string;

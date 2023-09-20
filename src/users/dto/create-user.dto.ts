@@ -7,6 +7,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { Role } from 'src/auth/enums/role.enum';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -20,6 +21,8 @@ export class CreateUserDto {
   @ApiProperty()
   @IsEmail()
   email: string;
+
+  roles: Role[];
 
   @ApiProperty()
   @IsString()
