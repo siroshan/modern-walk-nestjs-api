@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Param,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.gurad';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -19,5 +26,11 @@ export class AuthController {
   @Post('signup')
   signup(@Body() signUpDto: CreateUserDto) {
     return this.authService.signUp(signUpDto);
+  }
+
+  @Public()
+  @Post('otp/:email')
+  sendOTPMail(@Param('email') email: string) {
+    return this.authService.sendOTPMail(email);
   }
 }
